@@ -1,0 +1,55 @@
+FROM ubuntu:22.04
+
+LABEL maintainer="Enseignant Big Data"
+
+# Éviter les invites interactives pendant l'installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Installation des dépendances (Java OpenJDK 11, SSH, curl, etc.)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openjdk-11-jdk-headless \
+    openssh-server \
+    openssh-client \
+    curl \
+    tar \
+    sudo \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Variables d'environnement Java et Hadoop
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV HADOOP_VERSION=3.3.6
+ENV HADOOP_HOME=/opt/hadoop
+ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+
+# Téléchargement et extraction de Hadoop
+RUN curl -fSL "https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" -o /tmp/hadoop.tar.gz && \
+    tar -xzf /tmp/hadoop.tar.gz -C /opt/ && \
+    mv /opt/hadoop-${HADOOP_VERSION} ${HADOOP_HOME} && \
+    rm /tmp/hadoop.tar.gz
+
+# Configuration SSH sans mot de passe (requis pour les scripts start-dfs/start-yarn)
+RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && \
+    cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys && \
+    chmod 0600 ~/.ssh/authorized_keys
+
+# Définition de JAVA_HOME dans hadoop-env.sh
+RUN echo "export JAVA_HOME=${JAVA_HOME}" >> ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
+
+# Copie des fichiers de configuration
+COPY config/* ${HADOOP_HOME}/etc/hadoop/
+
+# Copie et droits du script d'entrée
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Création des répertoires pour les données et logs
+RUN mkdir -p /opt/hadoop/data/nameNode /opt/hadoop/data/dataNode /opt/hadoop/logs
+
+# Ports exposés :
+# 9870 : UI Web NameNode (HDFS)
+# 8088 : UI Web YARN ResourceManager
+# 9000 : IPC HDFS
+EXPOSE 9870 8088 9000
+
+ENTRYPOINT ["/entrypoint.sh"]
