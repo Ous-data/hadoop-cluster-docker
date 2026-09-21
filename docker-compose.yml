@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  hadoop-master:
+    build: .
+    image: hadoop-cluster:1.0
+    container_name: hadoop-node
+    hostname: localhost
+    ports:
+      - "9870:9870"  # Interface Web HDFS NameNode
+      - "8088:8088"  # Interface Web YARN ResourceManager
+      - "9000:9000"  # HDFS Default FS
+    volumes:
+      - hadoop-namenode-data:/opt/hadoop/data/nameNode
+      - hadoop-datanode-data:/opt/hadoop/data/dataNode
+    restart: unless-stopped
+
+volumes:
+  hadoop-namenode-data:
+  hadoop-datanode-data:
