@@ -1,4 +1,4 @@
-# 📚 Big Data & HDFS Courses
+# 📚 Big Data & Hadoop Courses
 
 Welcome to the official repository for the Hadoop and HDFS distributed file system course. Please choose your preferred language:
 
