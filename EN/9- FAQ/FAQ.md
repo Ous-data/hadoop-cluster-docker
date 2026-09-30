@@ -115,4 +115,27 @@ They collaborate closely via YARN through the following steps:
 4. It then commands the execution of **Map** tasks and coordinates the **Reduce** tasks of the MapReduce code.
 5. Finally, it monitors progress, handles any task failures, and notifies when the job is finished.
 
+---
+
+### Q13 - What if the application master goes down or worker tasks fail?
+
+**Answer:** 
+* The application master monitors worker tasks for errors or hanging, and restarts them as needed (preferably on a different node).
+* If the application master itself goes down, YARN can try to restart it.
+
+---
+
+### Q14 - What if an entire Node goes down?
+
+**Answer:** 
+* If an entire node goes down (which could be running the application master), the resource manager will try to restart it.
+
+---
+
+### Q15 - What if the resource manager goes down?
+
+**Answer:** 
+* You can set up "high availability" (HA) using Zookeeper to have a hot standby.
+
+
 ```

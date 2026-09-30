@@ -101,7 +101,7 @@ C'est **YARN** (*Yet Another Resource Negotiator*) qui gère cette partie depuis
     * **MapReduce** est le modèle de programmation et le moteur de calcul (le "cerveau" algorithmique). Il définit *comment* les données doivent être traitées à travers les phases de filtrage (*Map*) et d'agrégation (*Reduce*).
     * **L'Application Master (AM)** est un gestionnaire d'orchestration temporaire fourni par YARN. Son rôle n'est pas de calculer les données, mais de coordonner l'exécution du job, de négocier les ressources et de superviser le bon déroulement du traitement.
 
-* **Q12 : Comment l'Application Master et MapReduce travaillent-ils ensemble lors de l'exécution d'un job ?**
+### Q12 : Comment l'Application Master et MapReduce travaillent-ils ensemble lors de l'exécution d'un job ?
   * **Réponse :** Ils collaborent étroitement via YARN selon les étapes suivantes :
     1. Le client soumet le job MapReduce au **ResourceManager**.
     2. Le ResourceManager lance l'**Application Master** dans un premier conteneur.
@@ -109,5 +109,26 @@ C'est **YARN** (*Yet Another Resource Negotiator*) qui gère cette partie depuis
     4. Il ordonne ensuite l'exécution des tâches **Map** et coordonne les tâches **Reduce** du code MapReduce.
     5. Enfin, il supervise l'avancement, gère les éventuelles pannes de tâches et notifie la fin du job.
 
-```markdown
+
 ---
+
+### Q13 - Que se passe-t-il si l'application master tombe en panne ou si les tâches des workers échouent ?
+
+**Réponse :** 
+* L'application master surveille les tâches des workers pour détecter les erreurs ou les blocages, et les redémarre si nécessaire (de préférence sur un nœud différent).
+* Si l'application master elle-même tombe en panne, YARN peut essayer de la redémarrer.
+
+---
+
+### Q14 - Que se passe-t-il si un nœud entier tombe en panne ?
+
+**Réponse :** 
+* Cela peut concerner l'application master.
+* Le gestionnaire de ressources (*resource manager*) essaiera de la redémarrer.
+
+---
+
+### Q15 - Que se passe-t-il si le gestionnaire de ressources tombe en panne ?
+
+**Réponse :** 
+* Il est possible de configurer une "haute disponibilité" (HA) en utilisant Zookeeper pour disposer d'un nœud de secours à chaud (*hot standby*).
