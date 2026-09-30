@@ -1,4 +1,4 @@
-# 📚 FAQ - Cours HDFS & Hadoop
+# 📚 FAQ - Cours Hadoop (HDFS, YARN, MapReduce)
 
 Ce document rassemble les questions et réponses fréquemment posées dans le cadre du cours sur l'écosystème Hadoop (HDFS + YARN + MAPREDUCE).
 
