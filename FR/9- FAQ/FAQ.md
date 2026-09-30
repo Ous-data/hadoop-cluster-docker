@@ -1,6 +1,6 @@
 # 📚 FAQ - Cours HDFS & Hadoop
 
-Ce document rassemble les questions et réponses fréquemment posées dans le cadre du cours sur l'écosystème Hadoop et le système de fichiers distribué HDFS.
+Ce document rassemble les questions et réponses fréquemment posées dans le cadre du cours sur l'écosystème Hadoop (HDFS + YARN + MAPREDUCE).
 
 ---
 
@@ -93,3 +93,21 @@ La localité des données est un principe fondamental d'optimisation des perform
 C'est **YARN** (*Yet Another Resource Negotiator*) qui gère cette partie depuis Hadoop 2.0 :
 * **ResourceManager (RM) :** Le composant maître global qui arbitre et alloue les ressources de calcul (CPU, mémoire) à travers l'ensemble du cluster.
 * **NodeManager (NM) :** L'agent exécuté sur chaque nœud esclave qui surveille l'utilisation des ressources locales et gère les conteneurs d'exécution pour les tâches confiées.
+
+---
+
+### Q11 : Quelle est la différence fondamentale entre MapReduce et l'Application Master ?
+  * **Réponse :** 
+    * **MapReduce** est le modèle de programmation et le moteur de calcul (le "cerveau" algorithmique). Il définit *comment* les données doivent être traitées à travers les phases de filtrage (*Map*) et d'agrégation (*Reduce*).
+    * **L'Application Master (AM)** est un gestionnaire d'orchestration temporaire fourni par YARN. Son rôle n'est pas de calculer les données, mais de coordonner l'exécution du job, de négocier les ressources et de superviser le bon déroulement du traitement.
+
+* **Q12 : Comment l'Application Master et MapReduce travaillent-ils ensemble lors de l'exécution d'un job ?**
+  * **Réponse :** Ils collaborent étroitement via YARN selon les étapes suivantes :
+    1. Le client soumet le job MapReduce au **ResourceManager**.
+    2. Le ResourceManager lance l'**Application Master** dans un premier conteneur.
+    3. L'Application Master analyse le volume de données et demande au ResourceManager d'allouer des conteneurs supplémentaires (CPU et mémoire) sur les nœuds du cluster.
+    4. Il ordonne ensuite l'exécution des tâches **Map** et coordonne les tâches **Reduce** du code MapReduce.
+    5. Enfin, il supervise l'avancement, gère les éventuelles pannes de tâches et notifie la fin du job.
+
+```markdown
+---
